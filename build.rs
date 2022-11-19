@@ -288,7 +288,7 @@ mod c {
         } else {
             // None of these seem to be used on x86_64 windows, and they've all
             // got the wrong ABI anyway, so we want to avoid them.
-            if target_os != "windows" {
+            if target_os != "windows" && target_os != "cygwin" {
                 if target_arch == "x86_64" {
                     sources.extend(&[
                         ("__floatdixf", "x86_64/floatdixf.c"),
@@ -437,7 +437,7 @@ mod c {
                 ("__fe_raise_inexact", "fp_mode.c"),
             ]);
 
-            if target_os != "windows" {
+            if target_os != "windows" && target_os != "cygwin" {
                 sources.extend(&[("__multc3", "multc3.c")]);
             }
         }

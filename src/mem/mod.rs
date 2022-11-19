@@ -21,14 +21,14 @@ mod impls;
 
 intrinsics! {
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
         impls::copy_forward(dest, src, n);
         dest
     }
 
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
         let delta = (dest as usize).wrapping_sub(src as usize);
         if delta >= n {
@@ -42,26 +42,26 @@ intrinsics! {
     }
 
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn memset(s: *mut u8, c: crate::mem::c_int, n: usize) -> *mut u8 {
         impls::set_bytes(s, c as u8, n);
         s
     }
 
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
         impls::compare_bytes(s1, s2, n)
     }
 
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn bcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
         memcmp(s1, s2, n)
     }
 
     #[mem_builtin]
-    #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
+    #[cfg_attr(not(any(all(target_os = "windows", target_env = "gnu"), target_os = "cygwin")), linkage = "weak")]
     pub unsafe extern "C" fn strlen(s: *const core::ffi::c_char) -> usize {
         let mut n = 0;
         let mut s = s;

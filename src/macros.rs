@@ -174,7 +174,7 @@ macro_rules! intrinsics {
 
         $($rest:tt)*
     ) => (
-        #[cfg(all(any(windows, all(target_os = "uefi", target_arch = "x86_64")), target_pointer_width = "64"))]
+        #[cfg(all(any(windows, target_os = "cygwin", all(target_os = "uefi", target_arch = "x86_64")), target_pointer_width = "64"))]
         intrinsics! {
             $(#[$($attr)*])*
             pub extern "unadjusted" fn $name( $($argname: $ty),* ) $(-> $ret)? {
@@ -182,7 +182,7 @@ macro_rules! intrinsics {
             }
         }
 
-        #[cfg(not(all(any(windows, all(target_os = "uefi", target_arch = "x86_64")), target_pointer_width = "64")))]
+        #[cfg(not(all(any(windows, target_os = "cygwin", all(target_os = "uefi", target_arch = "x86_64")), target_pointer_width = "64")))]
         intrinsics! {
             $(#[$($attr)*])*
             pub extern $abi fn $name( $($argname: $ty),* ) $(-> $ret)? {
@@ -209,13 +209,13 @@ macro_rules! intrinsics {
 
         $($rest:tt)*
     ) => (
-        #[cfg(all(any(windows, target_os = "uefi"), target_arch = "x86_64"))]
+        #[cfg(all(any(windows, target_os = "cygwin", target_os = "uefi"), target_arch = "x86_64"))]
         $(#[$($attr)*])*
         pub extern $abi fn $name( $($argname: $ty),* ) $(-> $ret)? {
             $($body)*
         }
 
-        #[cfg(all(any(windows, target_os = "uefi"), target_arch = "x86_64"))]
+        #[cfg(all(any(windows, target_os = "cygwin", target_os = "uefi"), target_arch = "x86_64"))]
         pub mod $name {
             #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
             pub extern $abi fn $name( $($argname: $ty),* )
@@ -226,7 +226,7 @@ macro_rules! intrinsics {
             }
         }
 
-        #[cfg(not(all(any(windows, target_os = "uefi"), target_arch = "x86_64")))]
+        #[cfg(not(all(any(windows, target_os = "cygwin", target_os = "uefi"), target_arch = "x86_64")))]
         intrinsics! {
             $(#[$($attr)*])*
             pub extern $abi fn $name( $($argname: $ty),* ) $(-> $ret)? {
@@ -266,7 +266,7 @@ macro_rules! intrinsics {
         #[cfg(target_arch = "arm")]
         pub mod $alias {
             #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
-            #[cfg_attr(all(not(windows), not(target_vendor="apple")), linkage = "weak")]
+            #[cfg_attr(all(not(windows), not(target_vendor="apple"), not(target_os = "cygwin")), linkage = "weak")]
             pub extern "aapcs" fn $alias( $($argname: $ty),* ) $(-> $ret)? {
                 super::$name($($argname),*)
             }
@@ -427,7 +427,7 @@ macro_rules! intrinsics {
 
 // Hack for LLVM expectations for ABI on windows. This is used by the
 // `#[win64_128bit_abi_hack]` attribute recognized above
-#[cfg(all(any(windows, target_os = "uefi"), target_pointer_width = "64"))]
+#[cfg(all(any(windows, target_os = "cygwin", target_os = "uefi"), target_pointer_width = "64"))]
 pub mod win64_128bit_abi_hack {
     #[repr(simd)]
     pub struct U64x2(u64, u64);

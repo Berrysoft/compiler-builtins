@@ -11,8 +11,10 @@ use core::intrinsics;
 intrinsics! {
     #[naked]
     #[cfg(all(
-        windows,
-        target_env = "gnu",
+        any(
+          all(windows, target_env = "gnu"),
+          target_os = "cygwin"
+        ),
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn ___chkstk_ms() {
@@ -41,8 +43,10 @@ intrinsics! {
     // FIXME: __alloca should be an alias to __chkstk
     #[naked]
     #[cfg(all(
-        windows,
-        target_env = "gnu",
+        any(
+          all(windows, target_env = "gnu"),
+          target_os = "cygwin"
+        ),
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn __alloca() {
@@ -54,8 +58,10 @@ intrinsics! {
 
     #[naked]
     #[cfg(all(
-        windows,
-        target_env = "gnu",
+        any(
+          all(windows, target_env = "gnu"),
+          target_os = "cygwin"
+        ),
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn ___chkstk() {
