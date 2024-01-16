@@ -482,14 +482,16 @@ mod c {
             sources.remove(&["__aeabi_cdcmp", "__aeabi_cfcmp"]);
         }
 
-        // Android uses emulated TLS so we need a runtime support function.
-        if target_os == "android" {
+        // Android and Cygwin uses emulated TLS so we need a runtime support function.
+        if target_os == "android" || target_os == "cygwin" {
             sources.extend(&[("__emutls_get_address", "emutls.c")]);
 
-            // Work around a bug in the NDK headers (fixed in
-            // https://r.android.com/2038949 which will be released in a future
-            // NDK version) by providing a definition of LONG_BIT.
-            cfg.define("LONG_BIT", "(8 * sizeof(long))");
+            if (target_os == "android") {
+                // Work around a bug in the NDK headers (fixed in
+                // https://r.android.com/2038949 which will be released in a future
+                // NDK version) by providing a definition of LONG_BIT.
+                cfg.define("LONG_BIT", "(8 * sizeof(long))");
+            }
         }
 
         // When compiling the C code we require the user to tell us where the
