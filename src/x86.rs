@@ -10,7 +10,10 @@ use core::intrinsics;
 intrinsics! {
     #[naked]
     #[cfg(all(
-        any(all(windows, target_env = "gnu"), target_os = "uefi"),
+        any(all(any(
+            all(windows, target_env = "gnu"), target_os = "uefi")),
+            target_os = "cygwin"
+        ),
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn __chkstk() {
@@ -22,7 +25,10 @@ intrinsics! {
 
     #[naked]
     #[cfg(all(
-        any(all(windows, target_env = "gnu"), target_os = "uefi"),
+        any(all(any(
+            all(windows, target_env = "gnu"), target_os = "uefi")),
+            target_os = "cygwin"
+        ),
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn _alloca() {

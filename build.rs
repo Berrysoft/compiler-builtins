@@ -536,7 +536,7 @@ mod c {
                 ("__fe_raise_inexact", "fp_mode.c"),
             ]);
 
-            if target.os != "windows" {
+            if target.os != "windows" && target_os != "cygwin" {
                 sources.extend(&[("__multc3", "multc3.c")]);
             }
         }
@@ -569,14 +569,21 @@ mod c {
             sources.remove(&["__aeabi_cdcmp", "__aeabi_cfcmp"]);
         }
 
-        // Android uses emulated TLS so we need a runtime support function.
-        if target.os == "android" {
+        // Android and Cygwin uses emulated TLS so we need a runtime support function.
+        if target.os == "android" || target_os == "cygwin" {
             sources.extend(&[("__emutls_get_address", "emutls.c")]);
 
-            // Work around a bug in the NDK headers (fixed in
-            // https://r.android.com/2038949 which will be released in a future
-            // NDK version) by providing a definition of LONG_BIT.
-            cfg.define("LONG_BIT", "(8 * sizeof(long))");
+            if (target_os == "android") {
+                // Work around a bug in the NDK headers (fixed in
+                // https://r.android.com/2038949 which will be released in a future
+                // NDK version) by providing a definition of LONG_BIT.
+                cfg.define("LONG_BIT", "(8 * sizeof(long))");
+            }
+        }
+
+        // OpenHarmony also uses emulated TLS.
+        if target.env == "ohos" {
+            sources.extend(&[("__emutls_get_address", "emutls.c")]);
         }
 
         // OpenHarmony also uses emulated TLS.
