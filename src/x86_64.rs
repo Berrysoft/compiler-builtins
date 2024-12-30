@@ -35,7 +35,7 @@ intrinsics! {
             "pop    %rax",
             "pop    %rcx",
             "ret",
-            options(noreturn, att_syntax)
+            options(att_syntax)
         );
     }
 
@@ -48,10 +48,10 @@ intrinsics! {
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn __alloca() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
             "mov    %rcx,%rax", // x64 _alloca is a normal function with parameter in rcx
             "jmp    ___chkstk", // Jump to ___chkstk since fallthrough may be unreliable"
-            options(noreturn, att_syntax)
+            options(att_syntax)
         );
     }
 
@@ -64,7 +64,7 @@ intrinsics! {
         not(feature = "no-asm")
     ))]
     pub unsafe extern "C" fn ___chkstk() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
             "push   %rcx",
             "cmp    $0x1000,%rax",
             "lea    16(%rsp),%rcx", // rsp before calling this routine -> rcx
@@ -84,7 +84,7 @@ intrinsics! {
             "push   (%rax)",        // push return address onto the stack
             "sub    %rsp,%rax",     // restore the original value in rax
             "ret",
-            options(noreturn, att_syntax)
+            options(att_syntax)
         );
     }
 }
